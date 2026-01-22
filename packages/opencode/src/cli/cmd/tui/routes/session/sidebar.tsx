@@ -278,13 +278,13 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
               <box flexGrow={1} gap={1}>
                 <box flexDirection="row" justifyContent="space-between">
                   <text fg={theme.text}>
-                    <b>Getting started</b>
+                    <b>Getting started with OpenCode++</b>
                   </text>
                   <text fg={theme.textMuted} onMouseDown={() => kv.set("dismissed_getting_started", true)}>
                     ✕
                   </text>
                 </box>
-                <text fg={theme.textMuted}>OpenCode includes free models so you can start immediately.</text>
+                <text fg={theme.textMuted}>OpenCode++ includes free models so you can start immediately.</text>
                 <text fg={theme.textMuted}>
                   Connect from 75+ providers to use other models, including Claude, GPT, Gemini etc
                 </text>
@@ -301,8 +301,8 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
           </text>
           <text fg={theme.textMuted}>
             <span style={{ fg: theme.success }}>•</span> <b>Open</b>
-            <span style={{ fg: theme.text }}>
-              <b>Code</b>
+            <span style={{ fg: theme.primary || theme.text }}>
+              <b>Code++</b>
             </span>{" "}
             <span>{Installation.VERSION}</span>
           </text>

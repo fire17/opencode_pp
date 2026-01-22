@@ -1,6 +1,7 @@
 import { TextAttributes, RGBA } from "@opentui/core"
 import { For, type JSX } from "solid-js"
 import { useTheme, tint } from "@tui/context/theme"
+import { useLocal } from "../context/local"
 
 // Shadow markers (rendered chars in parens):
 // _ = full shadow cell (space with bg=shadow)
@@ -10,10 +11,21 @@ const SHADOW_MARKER = /[_^~]/
 
 const LOGO_LEFT = [`                   `, `█▀▀█ █▀▀█ █▀▀█ █▀▀▄`, `█__█ █__█ █^^^ █__█`, `▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀~~▀`]
 
-const LOGO_RIGHT = [`             ▄     `, `█▀▀▀ █▀▀█ █▀▀█ █▀▀█`, `█___ █__█ █__█ █^^^`, `▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀`]
-
+const LOGO_RIGHT = [
+  `             ▄             `,
+  `█▀▀▀ █▀▀█ █▀▀█ █▀▀█ __█__ __█__ `,
+  `█___ █__█ █__█ █^^^ ^^█^^ ^^█^^ `,
+  `▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ~~▀~~ ~~▀~~ `
+]
+const LOGO_RIGHT2 = [
+  `             ▄             `,
+  `█▀▀▀ █▀▀█ █▀▀█ █▀▀█ __█__   █_`,
+  `█___ █__█ █__█ █^^^ ^^█^^ ^^█^^`,
+  `▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ~~▀~~   ▀~ `
+]
 export function Logo() {
   const { theme } = useTheme()
+  const local = useLocal()
 
   const renderLine = (line: string, fg: RGBA, bold: boolean): JSX.Element[] => {
     const shadow = tint(theme.background, fg, 0.25)
@@ -79,7 +91,9 @@ export function Logo() {
         {(line, index) => (
           <box flexDirection="row" gap={1}>
             <box flexDirection="row">{renderLine(line, theme.textMuted, false)}</box>
-            <box flexDirection="row">{renderLine(LOGO_RIGHT[index()], theme.text, true)}</box>
+            <box flexDirection="row">
+              {renderLine(LOGO_RIGHT[index()], local.agent.color(local.agent.current().name), true)}
+            </box>
           </box>
         )}
       </For>
