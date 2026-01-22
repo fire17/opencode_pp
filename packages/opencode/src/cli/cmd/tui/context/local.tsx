@@ -37,9 +37,43 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
       const agents = createMemo(() => sync.data.agent.filter((x) => x.mode !== "subagent" && !x.hidden))
       const [agentStore, setAgentStore] = createStore<{
         current: string
+        ready: boolean
+        main: string[]
       }>({
         current: agents()[0].name,
+        ready: false,
+        main: [],
       })
+
+      const file = Bun.file(path.join(Global.Path.state, "agent.json"))
+      const state = {
+        pending: false,
+      }
+
+      function save() {
+        if (!agentStore.ready) {
+          state.pending = true
+          return
+        }
+        state.pending = false
+        Bun.write(
+          file,
+          JSON.stringify({
+            main: agentStore.main,
+          }),
+        )
+      }
+
+      file
+        .json()
+        .then((x) => {
+          if (Array.isArray(x.main)) setAgentStore("main", x.main)
+        })
+        .catch(() => { })
+        .finally(() => {
+          setAgentStore("ready", true)
+          if (state.pending) save()
+        })
       const { theme } = useTheme()
       const colors = createMemo(() => [
         theme.secondary,
@@ -67,11 +101,38 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
         },
         move(direction: 1 | -1) {
           batch(() => {
-            let next = agents().findIndex((x) => x.name === agentStore.current) + direction
-            if (next < 0) next = agents().length - 1
-            if (next >= agents().length) next = 0
-            const value = agents()[next]
+            const list = agents()
+            const mainAgents = agentStore.main.filter((name) => list.some((a) => a.name === name))
+            const targets = mainAgents.length > 0 ? list.filter((a) => mainAgents.includes(a.name)) : list
+
+            let next = targets.findIndex((x) => x.name === agentStore.current)
+            if (next === -1) {
+              // Current agent not in targets (e.g. switched to a non-main agent manually)
+              next = direction === 1 ? 0 : targets.length - 1
+            } else {
+              next += direction
+              if (next < 0) next = targets.length - 1
+              if (next >= targets.length) next = 0
+            }
+            const value = targets[next]
             setAgentStore("current", value.name)
+          })
+        },
+        isMain(name: string) {
+          return agentStore.main.includes(name)
+        },
+        toggleMain(name: string) {
+          batch(() => {
+            const exists = agentStore.main.includes(name)
+            if (exists) {
+              setAgentStore(
+                "main",
+                agentStore.main.filter((x) => x !== name),
+              )
+            } else {
+              setAgentStore("main", [...agentStore.main, name])
+            }
+            save()
           })
         },
         color(name: string) {
@@ -140,7 +201,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           if (Array.isArray(x.favorite)) setModelStore("favorite", x.favorite)
           if (typeof x.variant === "object" && x.variant !== null) setModelStore("variant", x.variant)
         })
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => {
           setModelStore("ready", true)
           if (state.pending) save()
