@@ -9,6 +9,21 @@
 </p>
 <p align="center">The open source AI coding agent.</p>
 <p align="center">
+  <b>OpenCode++</b> is a customized fork of OpenCode featuring enhanced branding and dynamic UI elements.
+</p>
+
+---
+
+## OpenCode++ Enhancements
+
+This fork introduces several improvements and visual refinements to the original OpenCode experience:
+
+- **Dynamic Agent Branding**: The "Code++" part of the main TUI logo now dynamically changes color to match the active agent (e.g., magenta for `build`, teal for `plan`).
+- **OpenCode++ Identity**: Updated branding across the TUI, including the window title, sidebar footers, and onboarding messages.
+- **Bun v1.3.5+ Support**: Updated dependency management to leverage Bun's `catalog:` feature for more robust package resolution.
+
+---
+<p align="center">
   <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
   <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
   <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
